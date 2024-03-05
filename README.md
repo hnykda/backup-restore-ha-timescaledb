@@ -33,7 +33,7 @@ alternatively, you can use the `docker-compose.yaml`
 1. `ssh` to the local HA instance, e.g. `ssh root@192.168.0.202`
 2. use `pg_dump` to dump the data (you will be prompted for the homeassistant's DB password of postgres user):
 
-    ```
+   ```
    apk update
    apk add postgresql
 
@@ -47,11 +47,11 @@ alternatively, you can use the `docker-compose.yaml`
 
 1. spin up a new container for our DB that we want to restore the data to by running the docker command from the above. This will expose `postgres` on `localhost:5432` with the `strong-password` password for the `postgres` user.
 2. Run the pg restore command:
-    
-    ```
-    # you will be prompted for password, by default 'strong-password'
-    pg_restore -U postgres -h localhost -Fc -d postgres --no-owner --no-privileges --create --clean ha.dump
-    ```
+
+   ```
+   # you will be prompted for password, by default 'strong-password'
+   pg_restore -U postgres -h localhost -Fc -d postgres --no-owner --no-privileges --create --clean ha.dump
+   ```
 
 ## Validating the dump went fine
 
@@ -85,30 +85,30 @@ alternatively, you can use the `docker-compose.yaml`
 2. `pgadmin` container in the `docker-compose.yaml` is optional, you can ignore it, it's there for analysis if you need to
 3. for some reason, the restore reports some errors such as `pg_restore: error: could not execute query: ERROR:  operation not supported on chunk tables`, and reported couple of errors. I believe it's OK. However, it would be probably cleaner to follow the official [TimescaleDB guide](https://docs.timescale.com/migrate/latest/pg-dump-and-restore/pg-dump-restore-from-timescaledb/), with something like this (I haven't tested this):
 
-    ```
-    # dumping data from the HA TimescaleDB instance
+   ```
+   # dumping data from the HA TimescaleDB instance
 
-    pg_dump -d "homeassistant" \
-        -h localhost -p 5433 -U postgres \
-        --format=plain \
-        --quote-all-identifiers \
-        --no-tablespaces \
-        --no-owner \
-        --no-privileges \
-        --file=dump-tsc.sql
+   pg_dump -d "homeassistant" \
+       -h localhost -p 5433 -U postgres \
+       --format=plain \
+       --quote-all-identifiers \
+       --no-tablespaces \
+       --no-owner \
+       --no-privileges \
+       --file=dump-tsc.sql
 
-    psql -U postgres -d postgres -h localhost -c 'CREATE DATABASE harestore;'
+   psql -U postgres -d postgres -h localhost -c 'CREATE DATABASE harestore;'
 
-    # then restoring with something like this
+   # then restoring with something like this
 
-    psql -v ON_ERROR_STOP=1 -d "harestore" \
-        -h localhost -U postgres --echo-errors \
-        -c "SELECT public.timescaledb_pre_restore();" \
-        -f dump-tsc.sql \
-        -c "SELECT public.timescaledb_post_restore();"
+   psql -v ON_ERROR_STOP=1 -d "harestore" \
+       -h localhost -U postgres --echo-errors \
+       -c "SELECT public.timescaledb_pre_restore();" \
+       -f dump-tsc.sql \
+       -c "SELECT public.timescaledb_post_restore();"
 
-    # but here I got some errors...
-    ```
+   # but here I got some errors...
+   ```
 
 # Cronjob backuping the DB
 
@@ -125,7 +125,7 @@ This is what I use to backup the DB from HA
 
     echo "STARTING" && \
         ssh $ADDRESS mkdir -p $BACKUP_DIR && \
-            ssh $ADDRESS "apk update && apk add postgresql && PGPASSWORD=homeassistant pg_dumpall --data-only --disable-triggers -h 77b2833f-timescaledb -U postgres --file $BACKUP_FILE" && \
+            ssh $ADDRESS "apk update && apk add postgresql && PGPASSWORD=homeassistant pg_dump --disable-triggers -h 77b2833f-timescaledb -U postgres -Fc -Z 9 -d homeassistant --no-owner --no-privileges --clean --file $BACKUP_FILE" && \
         scp $ADDRESS:$BACKUP_FILE . && \
         ssh $ADDRESS rm -f $BACKUP_FILE && \
         echo "BACKUP DONE"
