@@ -16,7 +16,6 @@ Being able to dump data from the `timescaledb` postgres version and restoring th
 
 ```
 docker run \
-  --name local_pgdb \
   --entrypoint "/bin/bash" \
   -p 5432:5432 \
   -e POSTGRES_PASSWORD=strong-password \
@@ -89,10 +88,14 @@ alternatively, you can use the `docker-compose.yaml`
             --no-owner \
             --no-privileges \
             --file=dump-tsc.sql
+    
+    psql -U postgres -d postgres -h localhost -c 'CREATE DATABASE harestore;'
 
     # then restoring with something like this
     psql -v ON_ERROR_STOP=1 -d "harestore" \
-        -h localhost -p 5433 -U postgres --echo-errors \
+        -h localhost -U postgres --echo-errors \
         -c "SELECT public.timescaledb_pre_restore();" \
         -f dump-tsc.sql \
         -c "SELECT public.timescaledb_post_restore();"
+    
+    # but here I got some errors...
