@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  db:
+    image: husselhans/hassos-addon-timescaledb-aarch64:3.0.2
+    container_name: local_pgdb
+    entrypoint: "/bin/bash"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: strong-password
+    volumes:
+      - ./dumps:/dumps
+      - ./data:/data:rw
+      - ./init.sh:/scripts/init.sh
+    command: "/scripts/init.sh"
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+      PGADMIN_CONFIG_ENABLE_PSQL: "True"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
