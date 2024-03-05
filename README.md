@@ -99,3 +99,27 @@ alternatively, you can use the `docker-compose.yaml`
         -c "SELECT public.timescaledb_post_restore();"
     
     # but here I got some errors...
+
+## Cronjob backuping the DB
+This is what I use to backup the DB from HA
+
+    #!/bin/bash
+    set -e
+
+    BACKUP_DIR=/root/db-backup # on remote
+    ADDRESS=root@ssh_ha  # this is in .ssh/config
+    BACKUP_NAME=$(date -Iseconds).dump
+    BACKUP_FILE=$BACKUP_DIR/$BACKUP_NAME
+
+    echo "STARTING" && \
+        ssh $ADDRESS mkdir -p $BACKUP_DIR && \
+            ssh $ADDRESS "apk update && apk add postgresql && PGPASSWORD=homeassistant pg_dumpall --data-only --disable-triggers -h 77b2833f-timescaledb -U postgres --file $BACKUP_FILE" && \
+        scp $ADDRESS:$BACKUP_FILE . && \
+        ssh $ADDRESS rm -f $BACKUP_FILE && \
+        echo "BACKUP DONE"
+
+    # notify HA
+    [ $? -eq 0 ] && WEBHOOK_ID="backing-up-confirmations-ookLyJMLbyruY" || WEBHOOK_ID="backing-up-confirmations-OZ6WisQ9"
+    curl -X POST -H "Content-Type: application/json" -d '{ "backup_name": "'$BACKUP_NAME'" }' http://192.168.0.202:8123/api/webhook/$WEBHOOK_ID
+
+    find . -name '*.dump' -type f -mtime +10 -delete
