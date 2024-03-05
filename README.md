@@ -53,9 +53,9 @@ alternatively, you can use the `docker-compose.yaml`
    pg_restore -U postgres -h localhost -Fc -d postgres --no-owner --no-privileges --create --clean ha.dump
    ```
 
-## Validating the dump went fine
+## Validating the backup
 
-1.  validate that you are able to get some older data from the DB. E.g. sshing to the local HA instance and running the following command returns a record that is 6 months old, showing that there are historical data and not just the recorder recent ones (by default 10 days):
+1.  validate that you are able to get some older data from the DB. E.g. sshing to the local HA instance and running the following command returns a record that is six months old, showing that there are historic data and not just the recorder recent ones (by default 10 days):
 
     ```
     $ psql -h 77b2833f-timescaledb -U postgres -d homeassistant -c "SELECT entity_id AS metric, state, time FROM ltss WHERE entity_id = 'update.home_assistant_core_update' AND state = 'on' ORDER BY 3 LIMIT 1"
@@ -77,13 +77,13 @@ alternatively, you can use the `docker-compose.yaml`
     (1 row)
     ```
 
-3.  If it is, you won!
+3.  If it is, you won! For a full test, e.g. including all data, roles, permissions etc. you would need to do more, but this basic check should be already pretty good evidence the backup is there.
 
 # FAQ and tips
 
 1. if the import fails, stop the containers, wipe the local `data` directory and start over
 2. `pgadmin` container in the `docker-compose.yaml` is optional, you can ignore it, it's there for analysis if you need to
-3. for some reason, the restore reports some errors such as `pg_restore: error: could not execute query: ERROR:  operation not supported on chunk tables`, and reported couple of errors. I believe it's OK. However, it would be probably cleaner to follow the official [TimescaleDB guide](https://docs.timescale.com/migrate/latest/pg-dump-and-restore/pg-dump-restore-from-timescaledb/), with something like this (I haven't tested this):
+3. for some reason, the restore reports some errors such as `pg_restore: error: could not execute query: ERROR:  operation not supported on chunk tables`, and reported a couple of errors. I believe it's OK. However, it would probably be cleaner to follow the official [TimescaleDB guide](https://docs.timescale.com/migrate/latest/pg-dump-and-restore/pg-dump-restore-from-timescaledb/), with something like this (I haven't tested this):
 
    ```
    # dumping data from the HA TimescaleDB instance
