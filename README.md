@@ -62,7 +62,7 @@ alternatively, you can use the `docker-compose.yaml`
 
                   metric               | state |             time
     -----------------------------------+-------+-------------------------------
-    update.home_assistant_core_update | on | 2023-07-25 10:35:51.436003+00
+     update.home_assistant_core_update | on | 2023-07-25 10:35:51.436003+00
     (1 row)
     ```
 
@@ -73,7 +73,7 @@ alternatively, you can use the `docker-compose.yaml`
 
                   metric               | state |             time
     -----------------------------------+-------+-------------------------------
-    update.home_assistant_core_update | on | 2023-07-25 10:35:51.436003+00
+     update.home_assistant_core_update | on | 2023-07-25 10:35:51.436003+00
     (1 row)
     ```
 
