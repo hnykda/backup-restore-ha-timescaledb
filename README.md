@@ -1,6 +1,6 @@
 # backup-restore-ha-timescaledb
 
-A repository with tools and examples to backup, validate and restore postgresql+timescaledb with LTSS for HA. This is definitely not intended as a "use as is" - you have to change the commands based on your needs. Still, I find it valuable to have one working example of how this works.
+A repository with tools and examples to backup, validate and restore postgresql+timescaledb with LTSS for HA (referenced [here](https://community.home-assistant.io/t/home-assistant-add-on-postgresql-timescaledb/198176/205?u=kotrfa)). This is definitely not intended as a "use as is" - you have to change the commands based on your needs. Still, I find it valuable to have one working example of how this works.
 
 # The goal
 
