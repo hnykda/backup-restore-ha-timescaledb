@@ -47,9 +47,11 @@ alternatively, you can use the `docker-compose.yaml`
 
 1. spin up a new container for our DB that we want to restore the data to by running the docker command from the above. This will expose `postgres` on `localhost:5432` with the `strong-password` password for the `postgres` user.
 2. Run the pg restore command:
-
+    
+    ```
     # you will be prompted for password, by default 'strong-password'
     pg_restore -U postgres -h localhost -Fc -d postgres --no-owner --no-privileges --create --clean ha.dump
+    ```
 
 ## Validating the dump went fine
 
