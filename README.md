@@ -9,9 +9,12 @@ Being able to dump data from the `timescaledb` postgres version and restoring th
 # Steps
 
 ## Preparing the env
+**Update**: Expaso added a so-called [standalone mode](https://github.com/Expaso/hassos-addons/tree/master/timescaledb#running-the-container-standalone), making my manually added `scripts/init.sh` handling unnecessary. The other commands still hold, but you don't Thanks a lot!
+
+
 
 0. have `docker` and `pg_restore` installed
-1. clonse this repository and go inside it
+1. clone this repository and go inside it
 2. prepare the command to start the local version of the DB that the addon uses:
 
 ```
